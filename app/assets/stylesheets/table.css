@@ -1,751 +1,467 @@
-/* line 35, ../../../app/assets/stylesheets/shared/variables.scss */
-.sexy-font {
-  font-family: "roboto", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", Helvetica, san-serif;
-  font-weight: 300;
-}
-
-/* line 40, ../../../app/assets/stylesheets/shared/variables.scss */
-.small-caps-font {
-  font-family: "roboto", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", "Arial Narrow", Helvetica, san-serif;
-  font-variant: small-caps;
-  text-transform: lowercase;
-  font-size: 20px;
-  position: relative;
-}
-
-/* line 21, ../../../app/assets/stylesheets/components/buttons.scss */
-.table-component .buttons-region ul li a.action-button {
-  display: inline-block;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  -ms-border-radius: 5px;
-  -o-border-radius: 5px;
-  border-radius: 5px;
-  height: 20px;
-  line-height: 18px;
-  min-width: 70px;
-  margin-right: 5px;
-  text-align: center;
-  font-size: 11px;
-  color: #4d4d4d;
-  border: 1px solid #b3b3b3;
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #fcfcfc), color-stop(1, #e7e7e7));
-  background-image: -o-linear-gradient(bottom, #fcfcfc 0%, #e7e7e7 100%);
-  background-image: -moz-linear-gradient(bottom, #fcfcfc 0%, #e7e7e7 100%);
-  background-image: -webkit-linear-gradient(bottom, #fcfcfc 0%, #e7e7e7 100%);
-  background-image: -ms-linear-gradient(bottom, #fcfcfc 0%, #e7e7e7 100%);
-  background-image: linear-gradient(to bottom, #fcfcfc 0%, #e7e7e7 100%);
-}
-/* line 35, ../../../app/assets/stylesheets/components/buttons.scss */
+.table-component .buttons-region ul li a.action-button.add, .table-component .buttons-region ul li a.action-button {
+    display: inline-block;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+    border-radius: 5px;
+    height: 20px;
+    line-height: 18px;
+    min-width: 70px;
+    margin-right: 5px;
+    text-align: center;
+    font-size: 11px;
+    color: #4d4d4d;
+    border: 1px solid #b3b3b3;
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #FCFCFC), color-stop(1, #E7E7E7));
+    background-image: -o-linear-gradient(bottom, #FCFCFC 0%, #E7E7E7 100%);
+    background-image: -moz-linear-gradient(bottom, #FCFCFC 0%, #E7E7E7 100%);
+    background-image: -webkit-linear-gradient(bottom, #FCFCFC 0%, #E7E7E7 100%);
+    background-image: -ms-linear-gradient(bottom, #FCFCFC 0%, #E7E7E7 100%);
+    background-image: linear-gradient(to bottom, #FCFCFC 0%, #E7E7E7 100%); }
 .table-component .buttons-region ul li a.action-button:hover {
-  text-decoration: none;
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #f0f0f0), color-stop(1, #e6e6e6));
-  background-image: -o-linear-gradient(bottom, #f0f0f0 0%, #e6e6e6 100%);
-  background-image: -moz-linear-gradient(bottom, #f0f0f0 0%, #e6e6e6 100%);
-  background-image: -webkit-linear-gradient(bottom, #f0f0f0 0%, #e6e6e6 100%);
-  background-image: -ms-linear-gradient(bottom, #f0f0f0 0%, #e6e6e6 100%);
-  background-image: linear-gradient(to bottom, #f0f0f0 0%, #e6e6e6 100%);
-  cursor: pointer;
-}
-/* line 41, ../../../app/assets/stylesheets/components/buttons.scss */
+    text-decoration: none;
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #F0F0F0), color-stop(1, #E6E6E6));
+    background-image: -o-linear-gradient(bottom, #F0F0F0 0%, #E6E6E6 100%);
+    background-image: -moz-linear-gradient(bottom, #F0F0F0 0%, #E6E6E6 100%);
+    background-image: -webkit-linear-gradient(bottom, #F0F0F0 0%, #E6E6E6 100%);
+    background-image: -ms-linear-gradient(bottom, #F0F0F0 0%, #E6E6E6 100%);
+    background-image: linear-gradient(to bottom, #F0F0F0 0%, #E6E6E6 100%);
+    cursor: pointer; }
 .table-component .buttons-region ul li a.disabled.action-button {
-  pointer-events: none;
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=40);
-  opacity: 0.4;
-}
-/* line 46, ../../../app/assets/stylesheets/components/buttons.scss */
+    pointer-events: none;
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=40);
+    opacity: 0.4; }
 .table-component .buttons-region ul li a.disabled.action-button:hover {
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #fcfcfc), color-stop(1, #e7e7e7));
-  background-image: -o-linear-gradient(bottom, #fcfcfc 0%, #e7e7e7 100%);
-  background-image: -moz-linear-gradient(bottom, #fcfcfc 0%, #e7e7e7 100%);
-  background-image: -webkit-linear-gradient(bottom, #fcfcfc 0%, #e7e7e7 100%);
-  background-image: -ms-linear-gradient(bottom, #fcfcfc 0%, #e7e7e7 100%);
-  background-image: linear-gradient(to bottom, #fcfcfc 0%, #e7e7e7 100%);
-  cursor: default;
-}
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #FCFCFC), color-stop(1, #E7E7E7));
+    background-image: -o-linear-gradient(bottom, #FCFCFC 0%, #E7E7E7 100%);
+    background-image: -moz-linear-gradient(bottom, #FCFCFC 0%, #E7E7E7 100%);
+    background-image: -webkit-linear-gradient(bottom, #FCFCFC 0%, #E7E7E7 100%);
+    background-image: -ms-linear-gradient(bottom, #FCFCFC 0%, #E7E7E7 100%);
+    background-image: linear-gradient(to bottom, #FCFCFC 0%, #E7E7E7 100%);
+    cursor: default; }
 
-/* line 54, ../../../app/assets/stylesheets/components/buttons.scss */
 .table-component .buttons-region ul li a.action-button.add {
-  padding: 0 10px;
-  color: #e8e8e8;
-  background-image: -moz-linear-gradient(90deg, #5d9a29 0%, #65b201 100%);
-  background-image: -webkit-linear-gradient(90deg, #5d9a29 0%, #65b201 100%);
-  background-image: -ms-linear-gradient(90deg, #5d9a29 0%, #65b201 100%);
-}
+    padding: 0 10px;
+    color: #e8e8e8;
+    background-image: -moz-linear-gradient(90deg, #5d9a29 0%, #65b201 100%);
+    background-image: -webkit-linear-gradient(90deg, #5d9a29 0%, #65b201 100%);
+    background-image: -ms-linear-gradient(90deg, #5d9a29 0%, #65b201 100%); }
 
-/* line 65, ../../../app/assets/stylesheets/components/buttons.scss */
-.filter-controls .filter-toggle:after, .table-component .buttons-region ul li a.action-button.tag:after {
-  padding: 0 5px;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  -ms-border-radius: 3px;
-  -o-border-radius: 3px;
-  border-radius: 3px;
-  color: #fff;
-  font-size: 12px;
-  font-weight: 100;
-  font-weight: 600;
-  margin-left: 3px;
-}
-/* line 73, ../../../app/assets/stylesheets/components/buttons.scss */
-.filter-controls .filter-toggle:after:hover, .table-component .buttons-region ul li a.action-button.tag:after:hover {
-  text-decoration: none;
-}
-
-/* line 79, ../../../app/assets/stylesheets/components/buttons.scss */
-.filter-controls .filter-toggle, .table-component .buttons-region ul li a.action-button.tag {
-  padding: 4px 7px;
-  color: #777;
-  text-transform: none;
-  font-size: 12px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  -ms-border-radius: 5px;
-  -o-border-radius: 5px;
-  border-radius: 5px;
-}
-/* line 88, ../../../app/assets/stylesheets/components/buttons.scss */
-.filter-controls .filter-toggle:hover, .table-component .buttons-region ul li a.action-button.tag:hover {
-  text-decoration: none;
-  background: #f3f3f3;
-}
-/* line 92, ../../../app/assets/stylesheets/components/buttons.scss */
-.filter-controls .filter-toggle:active, .table-component .buttons-region ul li a.action-button.tag:active {
-  background: #eeeeee;
-}
-
-/* line 100, ../../../app/assets/stylesheets/components/buttons.scss */
-.filter-controls .filter-toggle:after {
-  display: inline-block;
-  background-color: #1f7ba3;
-  content: '\2303';
-  text-shadow: 0, 1px, 0, rgba(0, 0, 0, 0.3);
-  font-size: 12px;
-  line-height: 16px;
-  padding-top: 1px;
-  position: relative;
-  top: 1px;
-  font-weight: bold;
-  -webkit-transition: all 0.25s ease;
-  -webkit-transition-delay: 0s;
-  -moz-transition: all 0.25s ease 0s;
-  -o-transition: all 0.25s ease 0s;
-  transition: all 0.25s ease 0s;
-}
-/* line 114, ../../../app/assets/stylesheets/components/buttons.scss */
-.filter-controls .enabled.filter-toggle:after {
-  -webkit-transform: rotate(180deg);
-  -moz-transform: rotate(180deg);
-  -ms-transform: rotate(180deg);
-  -o-transform: rotate(180deg);
-  transform: rotate(180deg);
-}
-
-/* line 122, ../../../app/assets/stylesheets/components/buttons.scss */
 .table-component .buttons-region ul li a.action-button.tag:after {
-  background-color: #90da2c;
-  content: '+';
-}
-/* line 126, ../../../app/assets/stylesheets/components/buttons.scss */
-.table-component .buttons-region ul li a.action-button.tag:hover {
-  text-decoration: none;
-  background-color: inherit;
-  color: #666;
-}
-/* line 130, ../../../app/assets/stylesheets/components/buttons.scss */
-.table-component .buttons-region ul li a.action-button.tag:hover:after {
-  background-color: #83c923;
-}
-/* line 134, ../../../app/assets/stylesheets/components/buttons.scss */
-.table-component .buttons-region ul li a.action-button.tag:active {
-  background-color: inherit;
-  color: #333;
-}
-/* line 137, ../../../app/assets/stylesheets/components/buttons.scss */
-.table-component .buttons-region ul li a.action-button.tag:active:after {
-  background-color: #7abc21;
-}
+    padding: 0 5px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    -ms-border-radius: 3px;
+    -o-border-radius: 3px;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 100;
+    font-weight: 600;
+    margin-left: 3px; }
+.table-component .buttons-region ul li a.action-button.tag:after:hover {
+    text-decoration: none; }
 
-/* line 16, ../../../app/assets/stylesheets/components/table.scss */
-.table-component .header-region h3 {
-  margin-bottom: 10px;
-}
-/* line 19, ../../../app/assets/stylesheets/components/table.scss */
-.table-component .header-region div.right {
-  float: right;
-}
-/* line 25, ../../../app/assets/stylesheets/components/table.scss */
-.table-component .filter-region .filter {
-  display: none;
-  height: 220px;
-  width: 104%;
-  margin-left: -2%;
-  margin-top: -10px;
-  margin-bottom: 10px;
-  padding: 15px;
-  position: relative;
-  background-color: #ececec;
-  border: 2px solid #a6a6a6;
-}
-/* line 41, ../../../app/assets/stylesheets/components/table.scss */
-.table-component .filter-region .filter option {
-  color: gray;
-}
-/* line 45, ../../../app/assets/stylesheets/components/table.scss */
-.table-component .filter-region .filter .filter-column {
-  height: 180px;
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  float: left;
-  border-right: 1px solid white;
-  border-left: 1px solid #b3b3b3;
-  padding-left: 20px;
-}
-/* line 53, ../../../app/assets/stylesheets/components/table.scss */
-.table-component .filter-region .filter .filter-column.columns-5 {
-  width: 20%;
-}
-/* line 57, ../../../app/assets/stylesheets/components/table.scss */
-.table-component .filter-region .filter .filter-column.columns-4 {
-  width: 25%;
-}
-/* line 61, ../../../app/assets/stylesheets/components/table.scss */
-.table-component .filter-region .filter .filter-column.columns-3 {
-  width: 33%;
-}
-/* line 65, ../../../app/assets/stylesheets/components/table.scss */
-.table-component .filter-region .filter .filter-column:first-child {
-  border-left: none;
-  padding-left: 0px;
-}
-/* line 70, ../../../app/assets/stylesheets/components/table.scss */
-.table-component .filter-region .filter .filter-column:last-child {
-  border-right: none;
-}
-/* line 75, ../../../app/assets/stylesheets/components/table.scss */
-.table-component .filter-region .filter .filter-header {
-  color: #292929;
-  text-transform: uppercase;
-}
-/* line 79, ../../../app/assets/stylesheets/components/table.scss */
-.table-component .filter-region .filter .filter-header:nth-child(0n + 3) {
-  margin-top: 30px;
-}
-/* line 84, ../../../app/assets/stylesheets/components/table.scss */
-.table-component .filter-region .filter .filter-input {
-  color: gray;
-  margin-top: 10px;
-}
-/* line 88, ../../../app/assets/stylesheets/components/table.scss */
-.table-component .filter-region .filter .filter-input input[type=text], .table-component .filter-region .filter .filter-input textarea {
-  width: 90%;
-}
-/* line 93, ../../../app/assets/stylesheets/components/table.scss */
-.table-component .filter-region .filter .filter-reset {
-  font-size: 11px;
-  display: inline-block;
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-}
-/* line 103, ../../../app/assets/stylesheets/components/table.scss */
-.table-component .selection-indicator-region .selection-indicator {
-  font-size: 10px;
-}
-/* line 108, ../../../app/assets/stylesheets/components/table.scss */
-.table-component .buttons-region ul {
-  list-style-type: none;
-  margin-bottom: 5px;
-}
-/* line 111, ../../../app/assets/stylesheets/components/table.scss */
-.table-component .buttons-region ul li {
-  display: inline-block;
-}
-/* line 121, ../../../app/assets/stylesheets/components/table.scss */
 .table-component .buttons-region ul li a.action-button.tag {
-  padding-bottom: 2px;
-  background-image: none;
-  border: none;
-  margin-right: 0;
-  padding-right: 0;
-  text-align: right;
-  position: relative;
-  bottom: 2px;
-}
-/* line 136, ../../../app/assets/stylesheets/components/table.scss */
+    padding: 4px 7px;
+    color: #777;
+    text-transform: none;
+    font-size: 12px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+    border-radius: 5px; }
+.table-component .buttons-region ul li a.action-button.tag:hover {
+    text-decoration: none;
+    background: #f3f3f3; }
+.table-component .buttons-region ul li a.action-button.tag:active {
+    background: #eee; }
+
+.table-component .buttons-region ul li a.action-button.tag:after {
+    background-color: #90da2c;
+    content: '+'; }
+.table-component .buttons-region ul li a.action-button.tag:hover {
+    text-decoration: none;
+    background-color: inherit;
+    color: #666; }
+.table-component .buttons-region ul li a.action-button.tag:hover:after {
+    background-color: #83c923; }
+.table-component .buttons-region ul li a.action-button.tag:active {
+    background-color: inherit;
+    color: #333; }
+.table-component .buttons-region ul li a.action-button.tag:active:after {
+    background-color: #7abc21; }
+
+.table-component {
+    /* jQuery Resizable Columns v0.1.0 | http://dobtco.github.io/jquery-resizable-columns/ | Licensed MIT | Built Wed Apr 30 2014 14:24:25 */
+    /*
+     * dragtable
+     *
+     * @Version 2.0.10
+     *
+     * default css
+     *
+     */
+    /*##### the dragtable stuff #####*/ }
+.table-component .header-region h3 {
+    margin-bottom: 10px; }
+.table-component .header-region div.right {
+    float: right; }
+.table-component .selection-indicator-region .selection-indicator {
+    font-size: 10px; }
+.table-component .buttons-region ul {
+    list-style-type: none;
+    margin-bottom: 5px; }
+.table-component .buttons-region ul li {
+    display: inline-block; }
+.table-component .buttons-region ul li a.action-button.tag {
+    padding-bottom: 2px;
+    background-image: none;
+    border: none;
+    margin-right: 0;
+    padding-right: 0;
+    text-align: right;
+    position: relative;
+    bottom: 2px; }
 .table-component .table-container {
-  position: relative;
-  clear: both;
-}
-/* line 139, ../../../app/assets/stylesheets/components/table.scss */
+    position: relative;
+    clear: both; }
 .table-component .table-container .overlay-region {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
-}
-/* line 147, ../../../app/assets/stylesheets/components/table.scss */
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1; }
 .table-component .table-region {
-  overflow: visible;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  -ms-border-radius: 5px;
-  -o-border-radius: 5px;
-  border-radius: 5px;
-  border: 1px solid #cccccc;
-  position: relative;
-}
-/* line 153, ../../../app/assets/stylesheets/components/table.scss */
+    overflow: visible;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    position: relative; }
 .table-component .table-region table {
-  width: 100%;
-}
-/* line 158, ../../../app/assets/stylesheets/components/table.scss */
+    width: 100%; }
 .table-component .table-region th, .table-component .table-region td {
-  padding: 5px 10px;
-}
-/* line 160, ../../../app/assets/stylesheets/components/table.scss */
+    padding: 5px 10px; }
 .table-component .table-region th.checkbox, .table-component .table-region td.checkbox {
-  width: 20px;
-  padding-right: 5px;
-}
-/* line 166, ../../../app/assets/stylesheets/components/table.scss */
+    width: 20px;
+    padding-right: 5px; }
 .table-component .table-region td.truncate {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-/* line 170, ../../../app/assets/stylesheets/components/table.scss */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; }
 .table-component .table-region td.truncate span {
-  display: block;
-  max-width: 400px;
-}
-/* line 175, ../../../app/assets/stylesheets/components/table.scss */
+    display: block;
+    max-width: 400px; }
 .table-component .table-region td.tab-loading {
-  padding-top: 250px;
-  width: 100%;
-}
-/* line 181, ../../../app/assets/stylesheets/components/table.scss */
+    padding-top: 250px;
+    width: 100%; }
 .table-component .table-region thead {
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ffffff), color-stop(100%, #dfdfdf));
-  background-image: -webkit-linear-gradient(#ffffff, #dfdfdf);
-  background-image: -moz-linear-gradient(#ffffff, #dfdfdf);
-  background-image: -o-linear-gradient(#ffffff, #dfdfdf);
-  background-image: linear-gradient(#ffffff, #dfdfdf);
-}
-/* line 186, ../../../app/assets/stylesheets/components/table.scss */
+    background-image: -owg(linear-gradient(#fff, #dfdfdf));
+    background-image: -webkit(linear-gradient(#fff, #dfdfdf));
+    background-image: -moz(linear-gradient(#fff, #dfdfdf));
+    background-image: -o(linear-gradient(#fff, #dfdfdf));
+    background-image: linear-gradient(#fff, #dfdfdf); }
 .table-component .table-region thead th {
-  cursor: normal;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  user-select: none;
-  text-transform: uppercase;
-  float: none !important;
-  border-right: 1px solid #ccc;
-  position: relative;
-}
-/* line 194, ../../../app/assets/stylesheets/components/table.scss */
+    cursor: normal;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    text-transform: uppercase;
+    float: none !important;
+    border-right: 1px solid #ccc;
+    position: relative; }
 .table-component .table-region thead th.checkbox {
-  cursor: pointer;
-}
-/* line 198, ../../../app/assets/stylesheets/components/table.scss */
+    cursor: pointer; }
 .table-component .table-region thead th:first-child {
-  -moz-border-radius-topleft: 5px;
-  -webkit-border-top-left-radius: 5px;
-  border-top-left-radius: 5px;
-}
-/* line 201, ../../../app/assets/stylesheets/components/table.scss */
+    -moz-border-radius-topleft: 5px;
+    -webkit-border-top-left-radius: 5px;
+    border-top-left-radius: 5px; }
 .table-component .table-region thead th:last-child {
-  -moz-border-radius-topright: 5px;
-  -webkit-border-top-right-radius: 5px;
-  border-top-right-radius: 5px;
-  border-right: 0;
-}
-/* line 205, ../../../app/assets/stylesheets/components/table.scss */
+    -moz-border-radius-topright: 5px;
+    -webkit-border-top-right-radius: 5px;
+    border-top-right-radius: 5px;
+    border-right: 0; }
 .table-component .table-region thead th.select-all {
-  width: 32px;
-}
-/* line 209, ../../../app/assets/stylesheets/components/table.scss */
+    width: 32px; }
 .table-component .table-region thead th.sortable span {
-  padding-right: 10px;
-}
-/* line 212, ../../../app/assets/stylesheets/components/table.scss */
+    padding-right: 10px; }
 .table-component .table-region thead th span {
-  float: none;
-}
-/* line 217, ../../../app/assets/stylesheets/components/table.scss */
+    float: none; }
 .table-component .table-region thead th.sort.asc span:after {
-  position: absolute;
-  content: '';
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-bottom: 5px solid black;
-  top: 50%;
-  right: 5px;
-  margin-top: -3px;
-}
-/* line 231, ../../../app/assets/stylesheets/components/table.scss */
+    position: absolute;
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid black;
+    top: 50%;
+    right: 5px;
+    margin-top: -3px; }
 .table-component .table-region thead th.sort.desc span:after {
-  position: absolute;
-  content: '';
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
-  border-top: 5px solid black;
-  top: 50%;
-  right: 5px;
-  margin-top: -3px;
-}
-/* line 244, ../../../app/assets/stylesheets/components/table.scss */
+    position: absolute;
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid black;
+    top: 50%;
+    right: 5px;
+    margin-top: -3px; }
 .table-component .table-region thead th.sortable {
-  cursor: pointer;
-}
-/* line 246, ../../../app/assets/stylesheets/components/table.scss */
+    cursor: pointer; }
 .table-component .table-region thead th.sortable:hover, .table-component .table-region thead th.sortable.sort {
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f2f2f2), color-stop(100%, #d2d2d2));
-  background-image: -webkit-linear-gradient(#f2f2f2, #d2d2d2);
-  background-image: -moz-linear-gradient(#f2f2f2, #d2d2d2);
-  background-image: -o-linear-gradient(#f2f2f2, #d2d2d2);
-  background-image: linear-gradient(#f2f2f2, #d2d2d2);
-}
-/* line 254, ../../../app/assets/stylesheets/components/table.scss */
+    background-image: -owg(linear-gradient(#f2f2f2, #d2d2d2));
+    background-image: -webkit(linear-gradient(#f2f2f2, #d2d2d2));
+    background-image: -moz(linear-gradient(#f2f2f2, #d2d2d2));
+    background-image: -o(linear-gradient(#f2f2f2, #d2d2d2));
+    background-image: linear-gradient(#f2f2f2, #d2d2d2); }
 .table-component .table-region thead th.disabled {
-  pointer-events: none;
-  background-image: none;
-  cursor: normal;
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=70);
-  opacity: 0.7;
-}
-/* line 265, ../../../app/assets/stylesheets/components/table.scss */
+    pointer-events: none;
+    background-image: none;
+    cursor: normal;
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=70);
+    opacity: 0.7; }
 .table-component .table-region tbody tr.empty td {
-  padding: 15px 0;
-  text-align: center;
-}
-/* line 278, ../../../app/assets/stylesheets/components/table.scss */
+    padding: 15px 0;
+    text-align: center; }
+.table-component .table-region tbody tr:hover {
+    background: #efefef; }
 .table-component .pagination-region a.disabled, .table-component .pagination-region input.disabled, .table-component .pagination-region select.disabled {
-  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=40);
-  opacity: 0.4;
-  cursor: default;
-  pointer-events: none;
-}
-/* line 285, ../../../app/assets/stylesheets/components/table.scss */
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=40);
+    opacity: 0.4;
+    cursor: default;
+    pointer-events: none; }
 .table-component .pagination-region .paginator {
-  text-align: right;
-}
-/* line 288, ../../../app/assets/stylesheets/components/table.scss */
+    text-align: right; }
 .table-component .pagination-region .paginator div.left {
-  float: left;
-  padding-top: 2px;
-}
-/* line 293, ../../../app/assets/stylesheets/components/table.scss */
-.table-component .pagination-region .paginator span.line {
-  line-height: 23px;
-  vertical-align: baseline;
-}
-/* line 298, ../../../app/assets/stylesheets/components/table.scss */
+    float: left;
+    padding-top: 2px; }
+.table-component .pagination-region .paginator label.row_select span.line {
+    line-height: 23px;
+    vertical-align: baseline; }
+.table-component .pagination-region .paginator label.row_select select {
+    -webkit-box-shadow: inset 0, 0, 2px, rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: inset 0, 0, 2px, rgba(0, 0, 0, 0.2);
+    box-shadow: inset 0, 0, 2px, rgba(0, 0, 0, 0.2);
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    -ms-border-radius: 2px;
+    -o-border-radius: 2px;
+    border-radius: 2px;
+    color: #333;
+    border: 1px solid #ccc;
+    background: #fff;
+    font-weight: bold;
+    padding: 3px 5px;
+    -webkit-appearance: none;
+    position: relative; }
+.table-component .pagination-region .paginator label.row_select select:focus {
+    outline: none; }
+.table-component .pagination-region .paginator label.row_select select:after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 45px;
+    content: 'v'; }
 .table-component .pagination-region .paginator span.page_info {
-  padding-left: 10px;
-  padding-right: 10px;
-  vertical-align: baseline;
-  margin-top: 3px;
-}
-/* line 305, ../../../app/assets/stylesheets/components/table.scss */
+    padding-left: 10px;
+    padding-right: 10px;
+    vertical-align: baseline;
+    margin-top: 3px; }
 .table-component .pagination-region .paginator .page_navigation {
-  display: inline-block;
-  font-size: 0;
-  margin-top: 5px;
-}
-/* line 309, ../../../app/assets/stylesheets/components/table.scss */
+    display: inline-block;
+    font-size: 0;
+    margin-top: 5px; }
 .table-component .pagination-region .paginator .page_navigation * {
-  vertical-align: baseline;
-  font-size: 11px;
-}
-/* line 313, ../../../app/assets/stylesheets/components/table.scss */
+    vertical-align: baseline;
+    font-size: 11px; }
 .table-component .pagination-region .paginator .page_navigation a {
-  background-color: #d8d9d9;
-  display: inline-block;
-  vertical-align: top;
-  width: 21px;
-  height: 22px;
-  margin-right: 0;
-  margin-top: 0;
-  padding-left: 3px;
-  padding-right: 3px;
-  background-image: url(/assets/icons/pagination_new-150e46ec6b94ea38c88742a5c5bf78fa.png);
-  border: 1px solid #bbb;
-  background-repeat: no-repeat;
-  cursor: pointer;
-}
-@media (min--moz-device-pixel-ratio: 1.3), (-o-min-device-pixel-ratio: 2.6 / 2), (-webkit-min-device-pixel-ratio: 1.3), (min-device-pixel-ratio: 1.3), (min-resolution: 1.3dppx) {
-  /* line 313, ../../../app/assets/stylesheets/components/table.scss */
-  .table-component .pagination-region .paginator .page_navigation a {
-    /* on retina, use image that's scaled by 2 */
-    background-image: url("/assets/icons/pagination_new_2x-596332357c79a384076a482056c0f8a8.png");
-    background-size: 78px 11px;
-  }
-}
-/* line 329, ../../../app/assets/stylesheets/components/table.scss */
+    background-color: #d8d9d9;
+    display: inline-block;
+    vertical-align: top;
+    width: 21px;
+    height: 22px;
+    margin-right: 0;
+    margin-top: 0;
+    padding-left: 3px;
+    padding-right: 3px;
+    border: 1px solid #bbb;
+    background-repeat: no-repeat;
+    cursor: pointer; }
+.table-component .pagination-region .paginator .page_navigation a, .table-component .pagination-region .paginator .page_navigation a:hover {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAKCAYAAAAjBNk8AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyRpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoTWFjaW50b3NoKSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo5OEQ2RDdCMjE5ODMxMUUzODMwMkVBOTQ1MURCQkI3NiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo5OEQ2RDdCMzE5ODMxMUUzODMwMkVBOTQ1MURCQkI3NiI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjk4RDZEN0IwMTk4MzExRTM4MzAyRUE5NDUxREJCQjc2IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjk4RDZEN0IxMTk4MzExRTM4MzAyRUE5NDUxREJCQjc2Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+Hz0KXgAAAaxJREFUeNq0lTGugkAURR8uhgW4BEtCY6XGgkIbGxIbExsTbaxcgb3roKIjNNhYsQB6QI3z/zWZyWgQZoC5yYuBCec8J8ODGGP0XZfLhQ2HQ1HT6ZRlWUZFUYiqeq4N53w+v9fwq8LkJT8n88CHR/aiDxVmG86AKjIej63VaiWub7cbrddrlue5eFAlfXGawlnggg8PD/zowxRn8As0n88tz/PEvev1SpvNRvx51Yb64Kh4wAMXfB544dfpV5dTuYGv1+tdi8XCmkwm4n4URbTb7VhZlkoN9cVpCjjggcsDH7y8B1OcQd1RRv0fXct1XbEWhiEdDgem80p05TQFHPB44IFP9pvi1J5AFAZqmqYf67Zta53ArpymfHPggU/2m+LUnsD7/U7b7ZYlSSLWZrMZSmsod+U0BRzweOCBD16dE9iG83MDH48H7fd7Fsex/FWl5XKpNZT74Kh4wAOXBz544dfpV5dTuYHP55OOx+PHPHAc5z0PdF6JvjiqowJc8OU5Cz/6MMWp3MDT6cSCIBDXo9GIfN+35NdSJX1xVEcFAj48PPCjD1OcPwEGADyKAmTPW4BiAAAAAElFTkSuQmCC); }
+@media (min--moz-device-pixel-ratio: 1.3), (-o-min-device-pixel-ratio: 2.6/2), (-webkit-min-device-pixel-ratio: 1.3), (min-device-pixel-ratio: 1.3), (min-resolution: 1.3dppx) {
+    .table-component .pagination-region .paginator .page_navigation a, .table-component .pagination-region .paginator .page_navigation a:hover {
+        /* on retina, use image that's scaled by 2 */
+        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAI4AAAAUCAYAAABbAAUtAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyNpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDE0IDc5LjE1MTQ4MSwgMjAxMy8wMy8xMy0xMjowOToxNSAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIChNYWNpbnRvc2gpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjY2MDc4MEFBREVCRjExRTM4MTY1OEE1NDQ5QzYxRjE1IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjY2MDc4MEFCREVCRjExRTM4MTY1OEE1NDQ5QzYxRjE1Ij4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6NjYwNzgwQThERUJGMTFFMzgxNjU4QTU0NDlDNjFGMTUiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6NjYwNzgwQTlERUJGMTFFMzgxNjU4QTU0NDlDNjFGMTUiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz52TA0sAAABVUlEQVR42uya4Q2DIBCFSTfoCqzgLK7QFVzBWVyhK7iCK3QFShObGMPRA7kDmnfJ/SzvYT8FjjPOOcNJHw+f7pQvn5Y7Rm7GtA0j9jGOv7UCHu1JgxsjMbdB+rkG5sD2kjrwHBh49XkXnMw3SO2OwRn2P+Y8r7ECNElecgTWwOCLAjikdqfgfIDfAvOZK0CT7KWkyKQADqndITiL5gv4w3uylyufNRfIQRicqHZH4EwB/5vkkh/xneVFXbAAOFHtDsBRe+kkPwASn7inAjikduPgWM1lnuE324v6pqogOKR2w+CQm/sK4Fw65Kgf4wqCE9VuEJxoOUEZmstlFenCkRUGJ6rdEDgsj5WLfEnP5GZk427qRU3t//eCpQpLlfpShc0xNsc4juM4rnMcRwEQBUBcOeDKQf7KAZecuOREWwXaKnTaKtDIhUauZHDQOorW0WO+BRgAtVH6DdOkhwgAAAAASUVORK5CYII=);
+        background-size: 78px 11px; } }
 .table-component .pagination-region .paginator .page_navigation a:hover {
-  background-image: url(/assets/icons/pagination_new-150e46ec6b94ea38c88742a5c5bf78fa.png);
-  background-color: #c3c5c5;
-}
-@media (min--moz-device-pixel-ratio: 1.3), (-o-min-device-pixel-ratio: 2.6 / 2), (-webkit-min-device-pixel-ratio: 1.3), (min-device-pixel-ratio: 1.3), (min-resolution: 1.3dppx) {
-  /* line 329, ../../../app/assets/stylesheets/components/table.scss */
-  .table-component .pagination-region .paginator .page_navigation a:hover {
-    /* on retina, use image that's scaled by 2 */
-    background-image: url("/assets/icons/pagination_new_2x-596332357c79a384076a482056c0f8a8.png");
-    background-size: 78px 11px;
-  }
-}
-/* line 334, ../../../app/assets/stylesheets/components/table.scss */
+    background-color: #c3c5c5; }
 .table-component .pagination-region .paginator .page_navigation a.first, .table-component .pagination-region .paginator .page_navigation a.next {
-  border-right: none;
-}
-/* line 337, ../../../app/assets/stylesheets/components/table.scss */
+    border-right: none; }
 .table-component .pagination-region .paginator .page_navigation a.last, .table-component .pagination-region .paginator .page_navigation a.previous {
-  border-left: 1px solid #ddd;
-}
-/* line 340, ../../../app/assets/stylesheets/components/table.scss */
+    border-left: 1px solid #ddd; }
 .table-component .pagination-region .paginator .page_navigation a.first {
-  -moz-border-radius-topleft: 5px;
-  /* Gecko */
-  -webkit-border-top-left-radius: 5px;
-  /* Webkit */
-  -khtml-border-top-left-radius: 5px;
-  /* Konqueror */
-  border-top-left-radius: 5px;
-  /* CSS3 */
-  -moz-border-radius-topright: 0;
-  /* Gecko */
-  -webkit-border-top-right-radius: 0;
-  /* Webkit */
-  -khtml-border-top-right-radius: 0;
-  /* Konqueror */
-  border-top-right-radius: 0;
-  /* CSS3 */
-  -moz-border-radius-bottomright: 0;
-  -webkit-border-bottom-right-radius: 0;
-  /* Webkit */
-  -khtml-border-bottom-right-radius: 0;
-  /* Konqueror */
-  border-bottom-right-radius: 0;
-  /* CSS3 */
-  -moz-border-radius-bottomleft: 5px;
-  /* Gecko */
-  -webkit-border-bottom-left-radius: 5px;
-  /* Webkit */
-  -khtml-border-bottom-left-radius: 5px;
-  /* Konqueror */
-  border-bottom-left-radius: 5px;
-  /* CSS3 */
-  background-position: -41px 5px;
-}
-/* line 344, ../../../app/assets/stylesheets/components/table.scss */
+    -moz-border-radius-topleft: 5px;
+    /* Gecko */
+    -webkit-border-top-left-radius: 5px;
+    /* Webkit */
+    -khtml-border-top-left-radius: 5px;
+    /* Konqueror */
+    border-top-left-radius: 5px;
+    /* CSS3 */
+    -moz-border-radius-topright: 0;
+    /* Gecko */
+    -webkit-border-top-right-radius: 0;
+    /* Webkit */
+    -khtml-border-top-right-radius: 0;
+    /* Konqueror */
+    border-top-right-radius: 0;
+    /* CSS3 */
+    -moz-border-radius-bottomright: 0;
+    -webkit-border-bottom-right-radius: 0;
+    /* Webkit */
+    -khtml-border-bottom-right-radius: 0;
+    /* Konqueror */
+    border-bottom-right-radius: 0;
+    /* CSS3 */
+    -moz-border-radius-bottomleft: 5px;
+    /* Gecko */
+    -webkit-border-bottom-left-radius: 5px;
+    /* Webkit */
+    -khtml-border-bottom-left-radius: 5px;
+    /* Konqueror */
+    border-bottom-left-radius: 5px;
+    /* CSS3 */
+    background-position: -39px 5px; }
 .table-component .pagination-region .paginator .page_navigation a.previous {
-  background-position: -62px 5px;
-  border-left: 1px solid #c0c0c0;
-  border-right: 0;
-}
-/* line 349, ../../../app/assets/stylesheets/components/table.scss */
+    background-position: -59px 5px;
+    border-left: 1px solid #c0c0c0;
+    border-right: 0; }
 .table-component .pagination-region .paginator .page_navigation a.previous, .table-component .pagination-region .paginator .page_navigation a.next {
-  -moz-border-radius-topleft: 0;
-  /* Gecko */
-  -webkit-border-top-left-radius: 0;
-  /* Webkit */
-  -khtml-border-top-left-radius: 0;
-  /* Konqueror */
-  border-top-left-radius: 0;
-  /* CSS3 */
-  -moz-border-radius-topright: 0;
-  /* Gecko */
-  -webkit-border-top-right-radius: 0;
-  /* Webkit */
-  -khtml-border-top-right-radius: 0;
-  /* Konqueror */
-  border-top-right-radius: 0;
-  /* CSS3 */
-  -moz-border-radius-bottomright: 0;
-  -webkit-border-bottom-right-radius: 0;
-  /* Webkit */
-  -khtml-border-bottom-right-radius: 0;
-  /* Konqueror */
-  border-bottom-right-radius: 0;
-  /* CSS3 */
-  -moz-border-radius-bottomleft: 0;
-  /* Gecko */
-  -webkit-border-bottom-left-radius: 0;
-  /* Webkit */
-  -khtml-border-bottom-left-radius: 0;
-  /* Konqueror */
-  border-bottom-left-radius: 0;
-  /* CSS3 */
-}
-/* line 352, ../../../app/assets/stylesheets/components/table.scss */
+    -moz-border-radius-topleft: 0;
+    /* Gecko */
+    -webkit-border-top-left-radius: 0;
+    /* Webkit */
+    -khtml-border-top-left-radius: 0;
+    /* Konqueror */
+    border-top-left-radius: 0;
+    /* CSS3 */
+    -moz-border-radius-topright: 0;
+    /* Gecko */
+    -webkit-border-top-right-radius: 0;
+    /* Webkit */
+    -khtml-border-top-right-radius: 0;
+    /* Konqueror */
+    border-top-right-radius: 0;
+    /* CSS3 */
+    -moz-border-radius-bottomright: 0;
+    -webkit-border-bottom-right-radius: 0;
+    /* Webkit */
+    -khtml-border-bottom-right-radius: 0;
+    /* Konqueror */
+    border-bottom-right-radius: 0;
+    /* CSS3 */
+    -moz-border-radius-bottomleft: 0;
+    /* Gecko */
+    -webkit-border-bottom-left-radius: 0;
+    /* Webkit */
+    -khtml-border-bottom-left-radius: 0;
+    /* Konqueror */
+    border-bottom-left-radius: 0;
+    /* CSS3 */ }
 .table-component .pagination-region .paginator .page_navigation a.next {
-  background-position: 1px 5px;
-  border-right: 1px solid #c0c0c0;
-  border-left: 0;
-}
-/* line 357, ../../../app/assets/stylesheets/components/table.scss */
+    background-position: 4px 5px;
+    border-right: 1px solid #c0c0c0;
+    border-left: 0; }
 .table-component .pagination-region .paginator .page_navigation a.last {
-  -moz-border-radius-topleft: 0;
-  /* Gecko */
-  -webkit-border-top-left-radius: 0;
-  /* Webkit */
-  -khtml-border-top-left-radius: 0;
-  /* Konqueror */
-  border-top-left-radius: 0;
-  /* CSS3 */
-  -moz-border-radius-topright: 5px;
-  /* Gecko */
-  -webkit-border-top-right-radius: 5px;
-  /* Webkit */
-  -khtml-border-top-right-radius: 5px;
-  /* Konqueror */
-  border-top-right-radius: 5px;
-  /* CSS3 */
-  -moz-border-radius-bottomright: 5px;
-  -webkit-border-bottom-right-radius: 5px;
-  /* Webkit */
-  -khtml-border-bottom-right-radius: 5px;
-  /* Konqueror */
-  border-bottom-right-radius: 5px;
-  /* CSS3 */
-  -moz-border-radius-bottomleft: 0;
-  /* Gecko */
-  -webkit-border-bottom-left-radius: 0;
-  /* Webkit */
-  -khtml-border-bottom-left-radius: 0;
-  /* Konqueror */
-  border-bottom-left-radius: 0;
-  /* CSS3 */
-  background-position: -19px 5px;
-  border-left: 0;
-}
-/* line 363, ../../../app/assets/stylesheets/components/table.scss */
+    -moz-border-radius-topleft: 0;
+    /* Gecko */
+    -webkit-border-top-left-radius: 0;
+    /* Webkit */
+    -khtml-border-top-left-radius: 0;
+    /* Konqueror */
+    border-top-left-radius: 0;
+    /* CSS3 */
+    -moz-border-radius-topright: 5px;
+    /* Gecko */
+    -webkit-border-top-right-radius: 5px;
+    /* Webkit */
+    -khtml-border-top-right-radius: 5px;
+    /* Konqueror */
+    border-top-right-radius: 5px;
+    /* CSS3 */
+    -moz-border-radius-bottomright: 5px;
+    -webkit-border-bottom-right-radius: 5px;
+    /* Webkit */
+    -khtml-border-bottom-right-radius: 5px;
+    /* Konqueror */
+    border-bottom-right-radius: 5px;
+    /* CSS3 */
+    -moz-border-radius-bottomleft: 0;
+    /* Gecko */
+    -webkit-border-bottom-left-radius: 0;
+    /* Webkit */
+    -khtml-border-bottom-left-radius: 0;
+    /* Konqueror */
+    border-bottom-left-radius: 0;
+    /* CSS3 */
+    background-position: -16px 5px;
+    border-left: 0; }
 .table-component .pagination-region .paginator .page_navigation input.curr {
-  width: 30px;
-  height: 22px;
-  text-align: center;
-  margin-top: 0;
-  vertical-align: top;
-}
-
-/* line 375, ../../../app/assets/stylesheets/components/table.scss */
-.select-all-tooltip {
-  width: 100px;
-}
-
-/* line 380, ../../../app/assets/stylesheets/components/table.scss */
-.filter-controls {
-  margin-top: 10px;
-}
-/* line 383, ../../../app/assets/stylesheets/components/table.scss */
-.filter-controls .filter-toggle {
-  height: 10px;
-}
-/* line 388, ../../../app/assets/stylesheets/components/table.scss */
-.filter-controls .filter-custom-query-field {
-  width: 67%;
-  background-image: "/assets/icons/search_new.png";
-  background-position: right;
-  background-repeat: no-repeat;
-}
-@media (min--moz-device-pixel-ratio: 1.3), (-o-min-device-pixel-ratio: 2.6 / 2), (-webkit-min-device-pixel-ratio: 1.3), (min-device-pixel-ratio: 1.3), (min-resolution: 1.3dppx) {
-  /* line 388, ../../../app/assets/stylesheets/components/table.scss */
-  .filter-controls .filter-custom-query-field {
-    /* on retina, use image that's scaled by 2 */
-    background-image: url("/assets/icons/search_new@2x.png");
-    background-size: 20px 20px;
-  }
-}
-
-/* jQuery Resizable Columns v0.1.0 | http://dobtco.github.io/jquery-resizable-columns/ | Licensed MIT | Built Wed Apr 30 2014 14:24:25 */
-/* line 398, ../../../app/assets/stylesheets/components/table.scss */
-.rc-handle-container {
-  position: relative;
-}
-
-/* line 401, ../../../app/assets/stylesheets/components/table.scss */
-.rc-handle {
-  position: absolute;
-  width: 7px;
-  cursor: ew-resize;
-  margin-left: -3px;
-  z-index: 2;
-}
-
-/* line 408, ../../../app/assets/stylesheets/components/table.scss */
-table.rc-table-resizing {
-  cursor: ew-resize;
-}
-
-/* line 413, ../../../app/assets/stylesheets/components/table.scss */
-table.rc-table-resizing thead,
-table.rc-table-resizing thead > th,
-table.rc-table-resizing thead > th > a {
-  cursor: ew-resize;
-}
-
-/*
- * dragtable
- *
- * @Version 2.0.10
- *
- * default css
- *
- */
-/*##### the dragtable stuff #####*/
-/* line 425, ../../../app/assets/stylesheets/components/table.scss */
-.dragtable-sortable {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  -moz-user-select: none;
-}
-
-/* line 428, ../../../app/assets/stylesheets/components/table.scss */
-.dragtable-sortable li {
-  margin: 0;
-  padding: 0;
-  float: left;
-  font-size: 1em;
-  background: white;
-}
-
-/* line 432, ../../../app/assets/stylesheets/components/table.scss */
-.dragtable-sortable th, .dragtable-sortable td {
-  border-left: 0px;
-}
-
-/* line 436, ../../../app/assets/stylesheets/components/table.scss */
-.dragtable-sortable li:first-child th, .dragtable-sortable li:first-child td {
-  border-left: 1px solid #CCC;
-}
-
-/* line 440, ../../../app/assets/stylesheets/components/table.scss */
-.ui-sortable-helper {
-  opacity: 0.7;
-  filter: alpha(opacity=70);
-}
-
-/* line 443, ../../../app/assets/stylesheets/components/table.scss */
-.ui-sortable-placeholder {
-  -moz-box-shadow: 4px 5px 4px #C6C6C6 inset;
-  -webkit-box-shadow: 4px 5px 4px #C6C6C6 inset;
-  box-shadow: 4px 5px 4px #C6C6C6 inset;
-  border-bottom: 1px solid #CCCCCC;
-  border-top: 1px solid #CCCCCC;
-  visibility: visible !important;
-  background: #EFEFEF !important;
-  visibility: visible !important;
-}
-
-/* line 453, ../../../app/assets/stylesheets/components/table.scss */
-.ui-sortable-placeholder * {
-  opacity: 0.0;
-  visibility: hidden;
-}
+    width: 30px;
+    height: 18px;
+    text-align: center;
+    margin-top: 0;
+    vertical-align: top; }
+.table-component .select-all-tooltip {
+    width: 100px; }
+.table-component .rc-handle-container {
+    position: relative; }
+.table-component .rc-handle {
+    position: absolute;
+    width: 7px;
+    cursor: ew-resize;
+    margin-left: -3px;
+    z-index: 2; }
+.table-component table.rc-table-resizing {
+    cursor: ew-resize; }
+.table-component table.rc-table-resizing thead, .table-component table.rc-table-resizing thead > th, .table-component table.rc-table-resizing thead > th > a {
+    cursor: ew-resize; }
+.table-component .dragtable-sortable {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    -moz-user-select: none; }
+.table-component .dragtable-sortable li {
+    margin: 0;
+    padding: 0;
+    float: left;
+    font-size: 1em;
+    background: white; }
+.table-component .dragtable-sortable th, .table-component .dragtable-sortable td {
+    border-left: 0px; }
+.table-component .dragtable-sortable li:first-child th, .table-component .dragtable-sortable li:first-child td {
+    border-left: 1px solid #CCC; }
+.table-component .ui-sortable-helper {
+    opacity: 0.7;
+    filter: alpha(opacity=70); }
+.table-component .ui-sortable-placeholder {
+    -moz-box-shadow: 4px 5px 4px #C6C6C6 inset;
+    -webkit-box-shadow: 4px 5px 4px #C6C6C6 inset;
+    box-shadow: 4px 5px 4px #C6C6C6 inset;
+    border-bottom: 1px solid #CCCCCC;
+    border-top: 1px solid #CCCCCC;
+    visibility: visible !important;
+    background: #EFEFEF !important;
+    visibility: visible !important; }
+.table-component .ui-sortable-placeholder * {
+    opacity: 0;
+    visibility: hidden; }

@@ -1,427 +1,3 @@
-/**
- * @license almond 0.2.9 Copyright (c) 2011-2014, The Dojo Foundation All Rights Reserved.
- * Available via the MIT or new BSD license.
- * see: http://github.com/jrburke/almond for details
- */
-//Going sloppy to avoid 'use strict' string cost, but strict practices should
-//be followed.
-/*jslint sloppy: true */
-/*global setTimeout: false */
-
-var requirejs, require, define;
-(function (undef) {
-    var main, req, makeMap, handlers,
-        defined = {},
-        waiting = {},
-        config = {},
-        defining = {},
-        hasOwn = Object.prototype.hasOwnProperty,
-        aps = [].slice,
-        jsSuffixRegExp = /\.js$/;
-
-    function hasProp(obj, prop) {
-        return hasOwn.call(obj, prop);
-    }
-
-    /**
-     * Given a relative module name, like ./something, normalize it to
-     * a real name that can be mapped to a path.
-     * @param {String} name the relative name
-     * @param {String} baseName a real name that the name arg is relative
-     * to.
-     * @returns {String} normalized name
-     */
-    function normalize(name, baseName) {
-        var nameParts, nameSegment, mapValue, foundMap, lastIndex,
-            foundI, foundStarMap, starI, i, j, part,
-            baseParts = baseName && baseName.split("/"),
-            map = config.map,
-            starMap = (map && map['*']) || {};
-
-        //Adjust any relative paths.
-        if (name && name.charAt(0) === ".") {
-            //If have a base name, try to normalize against it,
-            //otherwise, assume it is a top-level require that will
-            //be relative to baseUrl in the end.
-            if (baseName) {
-                //Convert baseName to array, and lop off the last part,
-                //so that . matches that "directory" and not name of the baseName's
-                //module. For instance, baseName of "one/two/three", maps to
-                //"one/two/three.js", but we want the directory, "one/two" for
-                //this normalization.
-                baseParts = baseParts.slice(0, baseParts.length - 1);
-                name = name.split('/');
-                lastIndex = name.length - 1;
-
-                // Node .js allowance:
-                if (config.nodeIdCompat && jsSuffixRegExp.test(name[lastIndex])) {
-                    name[lastIndex] = name[lastIndex].replace(jsSuffixRegExp, '');
-                }
-
-                name = baseParts.concat(name);
-
-                //start trimDots
-                for (i = 0; i < name.length; i += 1) {
-                    part = name[i];
-                    if (part === ".") {
-                        name.splice(i, 1);
-                        i -= 1;
-                    } else if (part === "..") {
-                        if (i === 1 && (name[2] === '..' || name[0] === '..')) {
-                            //End of the line. Keep at least one non-dot
-                            //path segment at the front so it can be mapped
-                            //correctly to disk. Otherwise, there is likely
-                            //no path mapping for a path starting with '..'.
-                            //This can still fail, but catches the most reasonable
-                            //uses of ..
-                            break;
-                        } else if (i > 0) {
-                            name.splice(i - 1, 2);
-                            i -= 2;
-                        }
-                    }
-                }
-                //end trimDots
-
-                name = name.join("/");
-            } else if (name.indexOf('./') === 0) {
-                // No baseName, so this is ID is resolved relative
-                // to baseUrl, pull off the leading dot.
-                name = name.substring(2);
-            }
-        }
-
-        //Apply map config if available.
-        if ((baseParts || starMap) && map) {
-            nameParts = name.split('/');
-
-            for (i = nameParts.length; i > 0; i -= 1) {
-                nameSegment = nameParts.slice(0, i).join("/");
-
-                if (baseParts) {
-                    //Find the longest baseName segment match in the config.
-                    //So, do joins on the biggest to smallest lengths of baseParts.
-                    for (j = baseParts.length; j > 0; j -= 1) {
-                        mapValue = map[baseParts.slice(0, j).join('/')];
-
-                        //baseName segment has  config, find if it has one for
-                        //this name.
-                        if (mapValue) {
-                            mapValue = mapValue[nameSegment];
-                            if (mapValue) {
-                                //Match, update name to the new value.
-                                foundMap = mapValue;
-                                foundI = i;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (foundMap) {
-                    break;
-                }
-
-                //Check for a star map match, but just hold on to it,
-                //if there is a shorter segment match later in a matching
-                //config, then favor over this star map.
-                if (!foundStarMap && starMap && starMap[nameSegment]) {
-                    foundStarMap = starMap[nameSegment];
-                    starI = i;
-                }
-            }
-
-            if (!foundMap && foundStarMap) {
-                foundMap = foundStarMap;
-                foundI = starI;
-            }
-
-            if (foundMap) {
-                nameParts.splice(0, foundI, foundMap);
-                name = nameParts.join('/');
-            }
-        }
-
-        return name;
-    }
-
-    function makeRequire(relName, forceSync) {
-        return function () {
-            //A version of a require function that passes a moduleName
-            //value for items that may need to
-            //look up paths relative to the moduleName
-            return req.apply(undef, aps.call(arguments, 0).concat([relName, forceSync]));
-        };
-    }
-
-    function makeNormalize(relName) {
-        return function (name) {
-            return normalize(name, relName);
-        };
-    }
-
-    function makeLoad(depName) {
-        return function (value) {
-            defined[depName] = value;
-        };
-    }
-
-    function callDep(name) {
-        if (hasProp(waiting, name)) {
-            var args = waiting[name];
-            delete waiting[name];
-            defining[name] = true;
-            main.apply(undef, args);
-        }
-
-        if (!hasProp(defined, name) && !hasProp(defining, name)) {
-            throw new Error('No ' + name);
-        }
-        return defined[name];
-    }
-
-    //Turns a plugin!resource to [plugin, resource]
-    //with the plugin being undefined if the name
-    //did not have a plugin prefix.
-    function splitPrefix(name) {
-        var prefix,
-            index = name ? name.indexOf('!') : -1;
-        if (index > -1) {
-            prefix = name.substring(0, index);
-            name = name.substring(index + 1, name.length);
-        }
-        return [prefix, name];
-    }
-
-    /**
-     * Makes a name map, normalizing the name, and using a plugin
-     * for normalization if necessary. Grabs a ref to plugin
-     * too, as an optimization.
-     */
-    makeMap = function (name, relName) {
-        var plugin,
-            parts = splitPrefix(name),
-            prefix = parts[0];
-
-        name = parts[1];
-
-        if (prefix) {
-            prefix = normalize(prefix, relName);
-            plugin = callDep(prefix);
-        }
-
-        //Normalize according
-        if (prefix) {
-            if (plugin && plugin.normalize) {
-                name = plugin.normalize(name, makeNormalize(relName));
-            } else {
-                name = normalize(name, relName);
-            }
-        } else {
-            name = normalize(name, relName);
-            parts = splitPrefix(name);
-            prefix = parts[0];
-            name = parts[1];
-            if (prefix) {
-                plugin = callDep(prefix);
-            }
-        }
-
-        //Using ridiculous property names for space reasons
-        return {
-            f: prefix ? prefix + '!' + name : name, //fullName
-            n: name,
-            pr: prefix,
-            p: plugin
-        };
-    };
-
-    function makeConfig(name) {
-        return function () {
-            return (config && config.config && config.config[name]) || {};
-        };
-    }
-
-    handlers = {
-        require: function (name) {
-            return makeRequire(name);
-        },
-        exports: function (name) {
-            var e = defined[name];
-            if (typeof e !== 'undefined') {
-                return e;
-            } else {
-                return (defined[name] = {});
-            }
-        },
-        module: function (name) {
-            return {
-                id: name,
-                uri: '',
-                exports: defined[name],
-                config: makeConfig(name)
-            };
-        }
-    };
-
-    main = function (name, deps, callback, relName) {
-        var cjsModule, depName, ret, map, i,
-            args = [],
-            callbackType = typeof callback,
-            usingExports;
-
-        //Use name if no relName
-        relName = relName || name;
-
-        //Call the callback to define the module, if necessary.
-        if (callbackType === 'undefined' || callbackType === 'function') {
-            //Pull out the defined dependencies and pass the ordered
-            //values to the callback.
-            //Default to [require, exports, module] if no deps
-            deps = !deps.length && callback.length ? ['require', 'exports', 'module'] : deps;
-            for (i = 0; i < deps.length; i += 1) {
-                map = makeMap(deps[i], relName);
-                depName = map.f;
-
-                //Fast path CommonJS standard dependencies.
-                if (depName === "require") {
-                    args[i] = handlers.require(name);
-                } else if (depName === "exports") {
-                    //CommonJS module spec 1.1
-                    args[i] = handlers.exports(name);
-                    usingExports = true;
-                } else if (depName === "module") {
-                    //CommonJS module spec 1.1
-                    cjsModule = args[i] = handlers.module(name);
-                } else if (hasProp(defined, depName) ||
-                           hasProp(waiting, depName) ||
-                           hasProp(defining, depName)) {
-                    args[i] = callDep(depName);
-                } else if (map.p) {
-                    map.p.load(map.n, makeRequire(relName, true), makeLoad(depName), {});
-                    args[i] = defined[depName];
-                } else {
-                    throw new Error(name + ' missing ' + depName);
-                }
-            }
-
-            ret = callback ? callback.apply(defined[name], args) : undefined;
-
-            if (name) {
-                //If setting exports via "module" is in play,
-                //favor that over return value and exports. After that,
-                //favor a non-undefined return value over exports use.
-                if (cjsModule && cjsModule.exports !== undef &&
-                        cjsModule.exports !== defined[name]) {
-                    defined[name] = cjsModule.exports;
-                } else if (ret !== undef || !usingExports) {
-                    //Use the return value from the function.
-                    defined[name] = ret;
-                }
-            }
-        } else if (name) {
-            //May just be an object definition for the module. Only
-            //worry about defining if have a module name.
-            defined[name] = callback;
-        }
-    };
-
-    requirejs = require = req = function (deps, callback, relName, forceSync, alt) {
-        if (typeof deps === "string") {
-            if (handlers[deps]) {
-                //callback in this case is really relName
-                return handlers[deps](callback);
-            }
-            //Just return the module wanted. In this scenario, the
-            //deps arg is the module name, and second arg (if passed)
-            //is just the relName.
-            //Normalize module name, if it contains . or ..
-            return callDep(makeMap(deps, callback).f);
-        } else if (!deps.splice) {
-            //deps is a config object, not an array.
-            config = deps;
-            if (config.deps) {
-                req(config.deps, config.callback);
-            }
-            if (!callback) {
-                return;
-            }
-
-            if (callback.splice) {
-                //callback is an array, which means it is a dependency list.
-                //Adjust args if there are dependencies
-                deps = callback;
-                callback = relName;
-                relName = null;
-            } else {
-                deps = undef;
-            }
-        }
-
-        //Support require(['a'])
-        callback = callback || function () {};
-
-        //If relName is a function, it is an errback handler,
-        //so remove it.
-        if (typeof relName === 'function') {
-            relName = forceSync;
-            forceSync = alt;
-        }
-
-        //Simulate async callback;
-        if (forceSync) {
-            main(undef, deps, callback, relName);
-        } else {
-            //Using a non-zero value because of concern for what old browsers
-            //do, and latest browsers "upgrade" to 4 if lower value is used:
-            //http://www.whatwg.org/specs/web-apps/current-work/multipage/timers.html#dom-windowtimers-settimeout:
-            //If want a value immediately, use require('id') instead -- something
-            //that works in almond on the global level, but not guaranteed and
-            //unlikely to work in other AMD implementations.
-            setTimeout(function () {
-                main(undef, deps, callback, relName);
-            }, 4);
-        }
-
-        return req;
-    };
-
-    /**
-     * Just drops the config on the floor, but returns req in case
-     * the config return value is used.
-     */
-    req.config = function (cfg) {
-        return req(cfg);
-    };
-
-    /**
-     * Expose module registry for debugging and tooling
-     */
-    requirejs._defined = defined;
-
-    define = function (name, deps, callback) {
-
-        //This module may not have dependencies
-        if (!deps.splice) {
-            //deps is not an array, so probably means
-            //an object literal or factory function for
-            //the value. Adjust args.
-            callback = deps;
-            deps = [];
-        }
-
-        if (!hasProp(defined, name) && !hasProp(waiting, name)) {
-            waiting[name] = [name, deps, callback];
-        }
-    };
-
-    define.amd = {
-        jQuery: true
-    };
-}());
-
-define("almond", function(){});
-
 (function() {
   var __slice = [].slice;
 
@@ -495,15 +71,15 @@ define("almond", function(){});
           options = {};
         }
         this.region = options.region;
-        this.app = options.app;
+        this._attachRadio();
         Controller.__super__.constructor.call(this, options);
         this._instance_id = _.uniqueId("controller");
-        this.app.execute("register:instance", this, this._instance_id);
+        this.carpenter.command("register:instance", this, this._instance_id);
       }
 
-      Controller.prototype.close = function() {
-        this.app.execute("unregister:instance", this, this._instance_id);
-        return Controller.__super__.close.apply(this, arguments);
+      Controller.prototype.destroy = function() {
+        this.carpenter.command("unregister:instance", this, this._instance_id);
+        return Controller.__super__.destroy.apply(this, arguments);
       };
 
       Controller.prototype.show = function(view, options) {
@@ -532,12 +108,12 @@ define("almond", function(){});
           return;
         }
         this._mainView = view;
-        return this.listenTo(view, "close", this.close);
+        return this.listenTo(view, "destroy", this.destroy);
       };
 
       Controller.prototype._manageView = function(view, options) {
         if (options.loading) {
-          return this.app.execute("show:loading", view, options);
+          return this.carpenter.command("show:loading", view, options);
         } else {
           return options.region.show(view);
         }
@@ -546,6 +122,10 @@ define("almond", function(){});
       Controller.prototype.mergeDefaultsInto = function(obj) {
         obj = _.isObject(obj) ? obj : {};
         return _.defaults(obj, this._getDefaults());
+      };
+
+      Controller.prototype._attachRadio = function() {
+        return this.carpenter = Backbone.Radio.channel('carpenter');
       };
 
       Controller.prototype._getDefaults = function() {
@@ -602,13 +182,20 @@ define("almond", function(){});
           reset: true,
           error: (function(_this) {
             return function(model, response, options) {
-              return _this.displayErrorMessage();
+              var _ref;
+              return _this.displayErrorMessage(response != null ? (_ref = response.responseJSON) != null ? _ref.message : void 0 : void 0);
             };
           })(this)
         });
       };
 
-      AjaxPaginatedCollection.prototype.displayErrorMessage = function() {};
+      AjaxPaginatedCollection.prototype.displayErrorMessage = function(message) {
+        return this.carpenter.command('flash:display', {
+          title: 'Error in search',
+          style: 'error',
+          message: message || 'There is an error in your search terms.'
+        });
+      };
 
       AjaxPaginatedCollection.prototype.updateSortKey = function() {
         var col;
@@ -778,7 +365,7 @@ define("almond", function(){});
       },
       triggerFilterToggle: function() {
         this.ui.filterToggle.toggleClass('enabled');
-        return this.app.vent.trigger(this.filterToggleEvent);
+        return this.carpenter.trigger(this.filterToggleEvent);
       }
     };
   });
@@ -802,7 +389,7 @@ define("almond", function(){});
         return this.debouncedTriggerCustomQuery();
       },
       triggerFilterCustomQuery: function() {
-        return this.app.vent.trigger(this.filterCustomQueryEvent, this.ui.filterCustomQueryField.val());
+        return this.carpenter.trigger(this.filterCustomQueryEvent, this.ui.filterCustomQueryField.val());
       }
     };
   });
@@ -879,8 +466,7 @@ define('templates/action_button',[],function(){
 });
 
 (function() {
-  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-    __hasProp = {}.hasOwnProperty,
+  var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
@@ -890,7 +476,6 @@ define('templates/action_button',[],function(){
       __extends(ActionButton, _super);
 
       function ActionButton() {
-        this.executeTrigger = __bind(this.executeTrigger, this);
         return ActionButton.__super__.constructor.apply(this, arguments);
       }
 
@@ -911,7 +496,7 @@ define('templates/action_button',[],function(){
       };
 
       ActionButton.prototype.initialize = function(opts) {
-        this.app = opts.app;
+        this.carpenter = opts.carpenter;
         this.selectable = !!opts.selectable;
         this.tableCollection = opts.tableCollection;
         this.tableSelections = opts.tableSelections;
@@ -957,7 +542,7 @@ define('templates/action_button',[],function(){
 
       ActionButton.prototype.executeTrigger = function() {
         if (this.model.get('event')) {
-          return this.app.trigger(this.model.get('event'));
+          return this.carpenter.trigger(this.model.get('event'));
         }
       };
 
@@ -1053,7 +638,7 @@ define('templates/control_bar',[],function(){
 
       ControlBar.prototype.template = template;
 
-      ControlBar.prototype.itemView = ActionButton;
+      ControlBar.prototype.childView = ActionButton;
 
       ControlBar.prototype.tagName = 'ul';
 
@@ -1071,10 +656,11 @@ define('templates/control_bar',[],function(){
         this.filterCustomQueryEvent = opts.filterCustomQueryEvent;
         this.filterToggleEvent = opts.filterToggleEvent;
         this.selectable = !!opts.selectable;
+        this.carpenter = opts.carpenter;
         return ControlBar.__super__.initialize.apply(this, arguments);
       };
 
-      ControlBar.prototype.buildItemView = function(item, ItemViewType, itemViewOptions) {
+      ControlBar.prototype.buildChildView = function(item, ItemViewType, itemViewOptions) {
         var defaultOptions, options;
         defaultOptions = {
           tableSelections: this.tableSelections,
@@ -1189,7 +775,6 @@ define('templates/empty',[],function(){
       __extends(Filter, _super);
 
       function Filter() {
-        this.onClose = __bind(this.onClose, this);
         this.resetFilter = __bind(this.resetFilter, this);
         this.toggleFilter = __bind(this.toggleFilter, this);
         return Filter.__super__.constructor.apply(this, arguments);
@@ -1220,23 +805,11 @@ define('templates/empty',[],function(){
         if (opts == null) {
           opts = {};
         }
-        this.app = opts.app;
         this.template = this.templatePath(opts.filterTemplatePath);
         this.model = opts.filterModel;
-        this.filterToggleEvent = opts.filterToggleEvent;
-        this.filterCustomQueryEvent = opts.filterCustomQueryEvent;
         this.filterAttrs = opts.filterAttrs;
         this.collection = opts.collection;
-        if (this.filterToggleEvent) {
-          this.app.vent.on(this.filterToggleEvent, this.toggleFilter);
-        }
-        return this.app.vent.on(this.filterCustomQueryEvent, (function(_this) {
-          return function(customQuery) {
-            if (_this.filterCustomQueryEvent) {
-              return _this.updateModel(customQuery);
-            }
-          };
-        })(this));
+        return this.carpenter = opts.carpenter;
       };
 
       Filter.prototype.inputActivity = function() {
@@ -1250,7 +823,7 @@ define('templates/empty',[],function(){
           return $el.val();
         });
         return this.filterInputReaderSet.register('checkbox', function($el) {
-          if ($el.attr('checked')) {
+          if ($el.prop('checked')) {
             return $el.data('filter-value');
           }
         });
@@ -1263,7 +836,7 @@ define('templates/empty',[],function(){
         });
         return this.filterInputWriterSet.register('checkbox', (function(_this) {
           return function($el, value) {
-            return _this.ui.checkboxes.filter("[data-filter-value='" + value + "']").attr('checked', true);
+            return _this.ui.checkboxes.filter("[data-filter-value='" + value + "']").prop('checked', true);
           };
         })(this));
       };
@@ -1315,7 +888,7 @@ define('templates/empty',[],function(){
       Filter.prototype.resetFilter = function() {
         this.ui.textInputs.val('');
         this.ui.selectInputs.val('');
-        this.ui.checkboxes.attr('checked', false);
+        this.ui.checkboxes.prop('checked', false);
         this.ui.hideOnResetInputs.css('visibility', 'hidden');
         return this.updateModel();
       };
@@ -1325,10 +898,6 @@ define('templates/empty',[],function(){
         if (this.filterAttrs) {
           return this.handleFilterOnLoad();
         }
-      };
-
-      Filter.prototype.onClose = function() {
-        return this.app.vent.off(this.filterToggleEvent);
       };
 
       return Filter;
@@ -1546,7 +1115,7 @@ define('templates/layout',[],function(){
       };
 
       Layout.prototype.mouseEnteredTableHeader = function(e) {
-        return this.overlayRegion.close();
+        return this.overlayRegion.reset();
       };
 
       Layout.prototype.mouseEnteredTableCell = function(e) {
@@ -1572,7 +1141,7 @@ define('templates/layout',[],function(){
           this.overlayRegion.show(hover);
           return (_ref = this.overlayRegion.$el) != null ? _ref.css(tdPosition) : void 0;
         } else {
-          return this.overlayRegion.close();
+          return this.overlayRegion.reset();
         }
       };
 
@@ -1593,7 +1162,7 @@ define('templates/layout',[],function(){
 
       return Layout;
 
-    })(Marionette.Layout);
+    })(Marionette.LayoutView);
   });
 
 }).call(this);
@@ -1710,7 +1279,7 @@ define('templates/paginator',[],function(){
           _print(i);
           _print(_safe('</option>\n        '));
         }
-        _print(_safe('\n      </select>\n    </label>\n\n    <span class=\'page_info line\'>\n      '));
+        _print(_safe('\n      </select>\n    </label>\n\n    <span class=\'page_info line\'>\n      Showing '));
         _print((this.currentPage - 1) * this.perPage + 1);
         _print(_safe(' - '));
         _print(this.lastRow);
@@ -1963,7 +1532,6 @@ define('templates/row',[],function(){
 
       function Row() {
         this.onShow = __bind(this.onShow, this);
-        this.triggerSelectionEvents = __bind(this.triggerSelectionEvents, this);
         this.selectionStateChanged = __bind(this.selectionStateChanged, this);
         return Row.__super__.constructor.apply(this, arguments);
       }
@@ -1988,11 +1556,11 @@ define('templates/row',[],function(){
         if (opts == null) {
           opts = {};
         }
-        this.app = opts.app;
         this.columns = opts.columns;
         this.selectable = !!opts.selectable;
         this.tableSelections = opts.tableSelections;
         this.serverAPI = opts.serverAPI;
+        this.carpenter = opts.carpenter;
         this.setInitialSelectionState();
         return _.each(this.columns, (function(_this) {
           return function(column, idx) {
@@ -2053,13 +1621,13 @@ define('templates/row',[],function(){
       Row.prototype.triggerSelectionEvents = function() {
         this.setSelectionState();
         this.recordSelectionState();
-        this.app.vent.trigger('table:row:selection_toggled', this.model);
+        this.carpenter.trigger('table:row:selection_toggled', this.model);
         this.model.trigger('selection_toggled');
         if (!this.ui.checkbox.prop('checked')) {
-          this.app.vent.trigger('table:row:deselected', this.model);
+          this.carpenter.trigger('table:row:deselected', this.model);
           return this.model.trigger('deselected');
         } else {
-          this.app.vent.trigger('table:row:selected', this.model);
+          this.carpenter.trigger('table:row:selected', this.model);
           return this.model.trigger('selected');
         }
       };
@@ -2083,7 +1651,7 @@ define('templates/row',[],function(){
                 throw new Error("getMainView() did not return a view instance or " + (view != null ? (_ref = view.constructor) != null ? _ref.name : void 0 : void 0) + " is not a view instance");
               }
               if (controller != null) {
-                _this.listenTo(view, "close", controller.close);
+                _this.listenTo(view, "destroy", controller.destroy);
               }
               return _this[_this.regionName(idx)].show(view);
             }
@@ -2101,7 +1669,7 @@ define('templates/row',[],function(){
 
       return Row;
 
-    })(Marionette.Layout);
+    })(Marionette.LayoutView);
   });
 
 }).call(this);
@@ -2132,7 +1700,15 @@ define('templates/table',[],function(){
     (function() {
       var column, sorted, _i, _len, _ref;
     
-      _print(_safe('<table>\n  <thead>\n    <tr>\n      '));
+      _print(_safe('<table '));
+    
+      if (this.htmlID) {
+        _print(_safe('id="'));
+        _print(this.htmlID);
+        _print(_safe('"'));
+      }
+    
+      _print(_safe('>\n  <thead>\n    <tr>\n      '));
     
       if (this.selectable) {
         _print(_safe('\n        <th class="select-all unselectable" unselectable="on">\n          <input type="checkbox" title="Selects all available records on every page">\n        </th>\n      '));
@@ -2181,17 +1757,251 @@ define('templates/table',[],function(){
   return template;
 });
 
+/* jQuery Resizable Columns v0.1.0 | http://dobtco.github.io/jquery-resizable-columns/ | Licensed MIT | Built Wed Apr 30 2014 14:24:25 */
+var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  __slice = [].slice;
+
+(function($, window) {
+  var ResizableColumns, parseWidth, pointerX, setWidth;
+  parseWidth = function(node) {
+    return parseFloat(node.style.width.replace('%', ''));
+  };
+  setWidth = function(node, width) {
+    width = width.toFixed(2);
+    return node.style.width = "" + width + "%";
+  };
+  pointerX = function(e) {
+    if (e.type.indexOf('touch') === 0) {
+      return (e.originalEvent.touches[0] || e.originalEvent.changedTouches[0]).pageX;
+    }
+    return e.pageX;
+  };
+  ResizableColumns = (function() {
+    ResizableColumns.prototype.defaults = {
+      selector: 'tr th:visible',
+      store: window.store,
+      syncHandlers: true,
+      resizeFromBody: true,
+      maxWidth: null,
+      minWidth: null
+    };
+
+    function ResizableColumns($table, options) {
+      this.pointerdown = __bind(this.pointerdown, this);
+      this.constrainWidth = __bind(this.constrainWidth, this);
+      this.options = $.extend({}, this.defaults, options);
+      this.$table = $table;
+      this.setHeaders();
+      this.restoreColumnWidths();
+      this.syncHandleWidths();
+      $(window).on('resize.rc', ((function(_this) {
+        return function() {
+          return _this.syncHandleWidths();
+        };
+      })(this)));
+      if (this.options.start) {
+        this.$table.bind('column:resize:start.rc', this.options.start);
+      }
+      if (this.options.resize) {
+        this.$table.bind('column:resize.rc', this.options.resize);
+      }
+      if (this.options.stop) {
+        this.$table.bind('column:resize:stop.rc', this.options.stop);
+      }
+    }
+
+    ResizableColumns.prototype.triggerEvent = function(type, args, original) {
+      var event;
+      event = $.Event(type);
+      event.originalEvent = $.extend({}, original);
+      return this.$table.trigger(event, [this].concat(args || []));
+    };
+
+    ResizableColumns.prototype.getColumnId = function($el) {
+      return this.$table.data('resizable-columns-id') + '-' + $el.data('resizable-column-id');
+    };
+
+    ResizableColumns.prototype.setHeaders = function() {
+      this.$tableHeaders = this.$table.find(this.options.selector);
+      this.assignPercentageWidths();
+      return this.createHandles();
+    };
+
+    ResizableColumns.prototype.destroy = function() {
+      this.$handleContainer.remove();
+      this.$table.removeData('resizableColumns');
+      return this.$table.add(window).off('.rc');
+    };
+
+    ResizableColumns.prototype.assignPercentageWidths = function() {
+      return this.$tableHeaders.each((function(_this) {
+        return function(_, el) {
+          var $el;
+          $el = $(el);
+          return setWidth($el[0], $el.outerWidth() / _this.$table.width() * 100);
+        };
+      })(this));
+    };
+
+    ResizableColumns.prototype.createHandles = function() {
+      var _ref;
+      if ((_ref = this.$handleContainer) != null) {
+        _ref.remove();
+      }
+      this.$table.before((this.$handleContainer = $("<div class='rc-handle-container' />")));
+      this.$tableHeaders.each((function(_this) {
+        return function(i, el) {
+          var $handle;
+          if (_this.$tableHeaders.eq(i + 1).length === 0 || (_this.$tableHeaders.eq(i).attr('data-noresize') != null) || (_this.$tableHeaders.eq(i + 1).attr('data-noresize') != null)) {
+            return;
+          }
+          $handle = $("<div class='rc-handle' />");
+          $handle.data('th', $(el));
+          return $handle.appendTo(_this.$handleContainer);
+        };
+      })(this));
+      return this.$handleContainer.on('mousedown touchstart', '.rc-handle', this.pointerdown);
+    };
+
+    ResizableColumns.prototype.syncHandleWidths = function() {
+      return this.$handleContainer.width(this.$table.width()).find('.rc-handle').each((function(_this) {
+        return function(_, el) {
+          var $el;
+          $el = $(el);
+          return $el.css({
+            left: $el.data('th').outerWidth() + ($el.data('th').offset().left - _this.$handleContainer.offset().left),
+            height: _this.options.resizeFromBody ? _this.$table.height() : _this.$table.find('thead').height()
+          });
+        };
+      })(this));
+    };
+
+    ResizableColumns.prototype.saveColumnWidths = function() {
+      return this.$tableHeaders.each((function(_this) {
+        return function(_, el) {
+          var $el;
+          $el = $(el);
+          if ($el.attr('data-noresize') == null) {
+            if (_this.options.store != null) {
+              return _this.options.store.set(_this.getColumnId($el), parseWidth($el[0]));
+            }
+          }
+        };
+      })(this));
+    };
+
+    ResizableColumns.prototype.restoreColumnWidths = function() {
+      return this.$tableHeaders.each((function(_this) {
+        return function(_, el) {
+          var $el, width;
+          $el = $(el);
+          if ((_this.options.store != null) && (width = _this.options.store.get(_this.getColumnId($el)))) {
+            return setWidth($el[0], width);
+          }
+        };
+      })(this));
+    };
+
+    ResizableColumns.prototype.totalColumnWidths = function() {
+      var total;
+      total = 0;
+      this.$tableHeaders.each((function(_this) {
+        return function(_, el) {
+          return total += parseFloat($(el)[0].style.width.replace('%', ''));
+        };
+      })(this));
+      return total;
+    };
+
+    ResizableColumns.prototype.constrainWidth = function(width) {
+      if (this.options.minWidth != null) {
+        width = Math.max(this.options.minWidth, width);
+      }
+      if (this.options.maxWidth != null) {
+        width = Math.min(this.options.maxWidth, width);
+      }
+      return width;
+    };
+
+    ResizableColumns.prototype.pointerdown = function(e) {
+      var $currentGrip, $leftColumn, $ownerDocument, $rightColumn, newWidths, startPosition, widths;
+      e.preventDefault();
+      $ownerDocument = $(e.currentTarget.ownerDocument);
+      startPosition = pointerX(e);
+      $currentGrip = $(e.currentTarget);
+      $leftColumn = $currentGrip.data('th');
+      $rightColumn = this.$tableHeaders.eq(this.$tableHeaders.index($leftColumn) + 1);
+      widths = {
+        left: parseWidth($leftColumn[0]),
+        right: parseWidth($rightColumn[0])
+      };
+      newWidths = {
+        left: widths.left,
+        right: widths.right
+      };
+      this.$handleContainer.add(this.$table).addClass('rc-table-resizing');
+      $leftColumn.add($rightColumn).add($currentGrip).addClass('rc-column-resizing');
+      this.triggerEvent('column:resize:start', [$leftColumn, $rightColumn, newWidths.left, newWidths.right], e);
+      $ownerDocument.on('mousemove.rc touchmove.rc', (function(_this) {
+        return function(e) {
+          var difference;
+          difference = (pointerX(e) - startPosition) / _this.$table.width() * 100;
+          setWidth($leftColumn[0], newWidths.left = _this.constrainWidth(widths.left + difference));
+          setWidth($rightColumn[0], newWidths.right = _this.constrainWidth(widths.right - difference));
+          if (_this.options.syncHandlers != null) {
+            _this.syncHandleWidths();
+          }
+          return _this.triggerEvent('column:resize', [$leftColumn, $rightColumn, newWidths.left, newWidths.right], e);
+        };
+      })(this));
+      return $ownerDocument.one('mouseup touchend', (function(_this) {
+        return function() {
+          $ownerDocument.off('mousemove.rc touchmove.rc');
+          _this.$handleContainer.add(_this.$table).removeClass('rc-table-resizing');
+          $leftColumn.add($rightColumn).add($currentGrip).removeClass('rc-column-resizing');
+          _this.syncHandleWidths();
+          _this.saveColumnWidths();
+          return _this.triggerEvent('column:resize:stop', [$leftColumn, $rightColumn, newWidths.left, newWidths.right], e);
+        };
+      })(this));
+    };
+
+    return ResizableColumns;
+
+  })();
+  return $.fn.extend({
+    resizableColumns: function() {
+      var args, option;
+      option = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      return this.each(function() {
+        var $table, data;
+        $table = $(this);
+        data = $table.data('resizableColumns');
+        if (!data) {
+          $table.data('resizableColumns', (data = new ResizableColumns($table, option)));
+        }
+        if (typeof option === 'string') {
+          return data[option].apply(data, args);
+        }
+      });
+    }
+  });
+})(window.jQuery, window);
+
+define("views/../../bower_components/jquery-resizable-columns/dist/jquery.resizableColumns.js", function(){});
+
 (function() {
   var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  define('views/row_list',['views/row', 'views/empty', 'views/loading', 'templates/table'], function(Row, Empty, Loading, template) {
+  define('views/row_list',['views/row', 'views/empty', 'views/loading', 'templates/table', '../../bower_components/jquery-resizable-columns/dist/jquery.resizableColumns.js'], function(Row, Empty, Loading, template) {
     var RowList;
     return RowList = (function(_super) {
       __extends(RowList, _super);
 
       function RowList() {
+        this.updateClasses = __bind(this.updateClasses, this);
         this.fetched = __bind(this.fetched, this);
         this.setSort = __bind(this.setSort, this);
         this.sortChanged = __bind(this.sortChanged, this);
@@ -2200,7 +2010,7 @@ define('templates/table',[],function(){
 
       RowList.prototype.template = template;
 
-      RowList.prototype.itemView = Row;
+      RowList.prototype.childView = Row;
 
       RowList.prototype.collectionEvents = {
         sync: 'fetched',
@@ -2221,7 +2031,7 @@ define('templates/table',[],function(){
         'click  th.sortable': 'sortChanged'
       };
 
-      RowList.prototype.itemViewContainer = 'tbody';
+      RowList.prototype.childViewContainer = 'tbody';
 
       RowList.prototype.sortColumn = null;
 
@@ -2235,13 +2045,14 @@ define('templates/table',[],function(){
         if (opts == null) {
           opts = {};
         }
-        this.app = opts.app;
+        this.htmlID = opts.htmlID;
         this.columns = opts.columns;
         this["static"] = !!opts["static"];
         this.selectable = !!opts.selectable;
         this.tableSelections = opts.tableSelections;
-        this.emptyView = opts.emptyView || Empty;
+        this.emptyView = opts.emptyView || opts.tableEmptyView || Empty;
         this.loadingView = opts.loadingView || Loading;
+        this.carpenter = opts.carpenter;
         this.setSort(this.collection.sortColumn, this.collection.sortDirection, {
           noReload: true
         });
@@ -2329,9 +2140,9 @@ define('templates/table',[],function(){
           $subsequentRows = $(e.target).parents('tr').nextAll();
           $previouslySelectedCheckbox = $('tr').find(this.previouslySelected);
           if ($previousRows.has($previouslySelectedCheckbox).length > 0) {
-            $(e.target).parents('tr').prevUntil($('tr').has($previouslySelectedCheckbox)).find('td.checkbox input').attr('checked', newState).change();
+            $(e.target).parents('tr').prevUntil($('tr').has($previouslySelectedCheckbox)).find('td.checkbox input').prop('checked', newState).change();
           } else if ($subsequentRows.has($previouslySelectedCheckbox).length > 0) {
-            $(e.target).parents('tr').nextUntil($('tr').has($previouslySelectedCheckbox)).find('td.checkbox input').attr('checked', newState).change();
+            $(e.target).parents('tr').nextUntil($('tr').has($previouslySelectedCheckbox)).find('td.checkbox input').prop('checked', newState).change();
           }
         }
         return this.previouslySelected = $(e.target);
@@ -2339,7 +2150,7 @@ define('templates/table',[],function(){
 
       RowList.prototype.handleRemoveMultiple = function() {
         if (this.collection.length === 0) {
-          return this.ui.selectAllCheckbox.attr('checked', false);
+          return this.ui.selectAllCheckbox.prop('checked', false);
         }
       };
 
@@ -2348,22 +2159,38 @@ define('templates/table',[],function(){
           this.emptyView = this.originalEmptyView;
           this.originalEmptyView = null;
           return this.render();
+        } else {
+          return this.updateClasses();
         }
       };
 
-      RowList.prototype.buildItemView = function(item, ItemView) {
+      RowList.prototype.buildChildView = function(item, ItemView) {
         return new ItemView({
           model: item,
           columns: this.columns,
           selectable: this.selectable,
           tableSelections: this.tableSelections,
           serverAPI: this.collection.server_api,
-          app: this.app
+          carpenter: this.carpenter
         });
       };
 
       RowList.prototype.serializeData = function() {
         return this;
+      };
+
+      RowList.prototype.updateClasses = function() {
+        var totalRecords, _base, _base1;
+        totalRecords = this.collection.totalRecords || this.collection.length || 0;
+        if (typeof (_base = this.ui.table).toggleClass === "function") {
+          _base.toggleClass('loaded', true);
+        }
+        return typeof (_base1 = this.ui.table).toggleClass === "function" ? _base1.toggleClass('populated', totalRecords > 0) : void 0;
+      };
+
+      RowList.prototype.onRender = function() {
+        this.ui.table.resizableColumns();
+        return this.updateClasses();
       };
 
       return RowList;
@@ -2498,13 +2325,23 @@ define('templates/selection_indicator',[],function(){
 //# sourceMappingURL=selection_indicator.js.map
 ;
 (function() {
-  var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  var __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   define('controllers/table_controller',['controllers/application_controller', 'entities/paginated_collection', 'entities/action_buttons_collection', 'entities/action_button', 'entities/filter', 'views/control_bar', 'views/empty', 'views/filter', 'views/header', 'views/layout', 'views/loading', 'views/paginator', 'views/row', 'views/row_list', 'views/selection_indicator'], function(Controller, CreatePaginatedCollectionClass, ActionButtonsCollection, ActionButton, EntityFilter, ControlBar, Empty, Filter, Header, Layout, Loading, Paginator, Row, RowList, SelectionIndicator) {
     var API;
     Marionette.Carpenter = {};
+    Marionette.Carpenter.CellController = (function(_super) {
+      __extends(CellController, _super);
+
+      function CellController() {
+        return CellController.__super__.constructor.apply(this, arguments);
+      }
+
+      return CellController;
+
+    })(Controller);
     Marionette.Carpenter.Controller = (function(_super) {
       __extends(Controller, _super);
 
@@ -2521,7 +2358,7 @@ define('templates/selection_indicator',[],function(){
         return Controller.__super__.constructor.apply(this, arguments);
       }
 
-      Controller.prototype.searchable = true;
+      Controller.prototype.filterable = true;
 
       Controller.prototype.selectable = false;
 
@@ -2558,7 +2395,7 @@ define('templates/selection_indicator',[],function(){
       Controller.prototype.paginator = null;
 
       Controller.prototype.initialize = function(opts) {
-        var PagerClass, _base;
+        var PagerClass, _base, _ref;
         if (opts == null) {
           opts = {};
         }
@@ -2579,7 +2416,7 @@ define('templates/selection_indicator',[],function(){
         }
         this.setMainView(new Layout(this));
         this.collection.perPage = this.perPage;
-        this.collection.sortColumn = this.defaultSortColumn().attribute;
+        this.collection.sortColumn = (_ref = this.defaultSortColumn()) != null ? _ref.attribute : void 0;
         this.collection.sortDirection = this.defaultSortDirection();
         if (!this["static"]) {
           this.collection.updateSortKey();
@@ -2592,22 +2429,13 @@ define('templates/selection_indicator',[],function(){
           this.tableSelections.deselectedIDs = {};
         }
         this.actionButtonsCollection = new ActionButtonsCollection(opts.actionButtons);
-        if (this.filterEnabled()) {
-          this.filterModel = new EntityFilter(this.filterAttrs);
-        }
+        this.listClass || (this.listClass = RowList);
         this.header = new Header(this);
         this.buttons = new ControlBar(this);
-        this.list = new RowList(this);
+        this.list = new this.listClass(this);
         this.paginator = new Paginator(this);
         if (this.selectable) {
           this.selectionIndicator = new SelectionIndicator(this);
-        }
-        if (this.filterEnabled()) {
-          if (this.filterView) {
-            this.filter = new this.filterView(this);
-          } else {
-            this.filter = new Filter(this);
-          }
         }
         this.listenTo(this.collection, 'reset', (function(_this) {
           return function() {
@@ -2620,6 +2448,11 @@ define('templates/selection_indicator',[],function(){
           };
         })(this));
         this.listenTo(this.collection, 'change', (function(_this) {
+          return function() {
+            return _this.toggleInteraction(true);
+          };
+        })(this));
+        this.listenTo(this.collection, 'error', (function(_this) {
           return function() {
             return _this.toggleInteraction(true);
           };
@@ -2648,13 +2481,9 @@ define('templates/selection_indicator',[],function(){
             region: this.getMainView().paginationRegion
           });
           if (this.selectable) {
-            this.show(this.selectionIndicator, {
-              region: this.getMainView().selectionIndicatorRegion
-            });
-          }
-          if (this.filterEnabled()) {
-            return this.show(this.filter, {
-              region: this.getMainView().filterRegion
+            return this.show(this.selectionIndicator, {
+              region: this.getMainView().selectionIndicatorRegion,
+              preventDestroy: false
             });
           }
         });
@@ -2712,18 +2541,8 @@ define('templates/selection_indicator',[],function(){
             }
           };
         })(this));
-        if (this.filter) {
-          this.listenTo(this.filter, 'table:search', (function(_this) {
-            return function(filter) {
-              _this.toggleInteraction(false);
-              return _this.list.setSearch(filter);
-            };
-          })(this));
-        }
         if (this["static"]) {
           this.collection.bootstrap();
-        } else if (this.filterAttrs) {
-          this.list.setSearch(this.filter.model);
         } else {
           this.collection.fetch({
             reset: true
@@ -2768,8 +2587,12 @@ define('templates/selection_indicator',[],function(){
       Controller.prototype.totalRecords = function() {
         if (this.collection.totalRecords != null) {
           return this.collection.totalRecords;
-        } else {
+        } else if (this.collection.origModels != null) {
           return this.collection.origModels.length;
+        } else if (this.collection.models != null) {
+          return this.collection.models.length;
+        } else {
+          return 0;
         }
       };
 
@@ -2799,7 +2622,7 @@ define('templates/selection_indicator',[],function(){
       Controller.prototype.toggleInteraction = function(enabled) {
         var $ctrlBarButtons, userInputSelector;
         if (enabled) {
-          this.app.vent.trigger('total_records:change', this.totalRecords());
+          this.carpenter.trigger('total_records:change', this.totalRecords());
         }
         if (this.isInteractionEnabled === enabled) {
           return;
@@ -2814,10 +2637,6 @@ define('templates/selection_indicator',[],function(){
         if (enabled) {
           return this.paginator.render();
         }
-      };
-
-      Controller.prototype.filterEnabled = function() {
-        return this.filterTemplatePath || this.filterView;
       };
 
       return Controller;
@@ -2837,4 +2656,4 @@ define('templates/selection_indicator',[],function(){
 
 require(["controllers/table_controller"]);
 
-//# sourceMappingURL=marionette.carpenter.js.map
+//# sourceMappingURL=marionette.carpenter.require.js.map

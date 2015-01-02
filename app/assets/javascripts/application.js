@@ -16,6 +16,7 @@
 //= require underscore_string
 //= require backbone
 //= require marionette
+//= require backbone.radio
 //= require cocktail
 //= require backbone.chooser
 //= require backbone.paginator
